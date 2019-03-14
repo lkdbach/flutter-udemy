@@ -5,18 +5,15 @@ void main() => runApp(MyApp());
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return null;
+    return _MyAppState();
   }
 }
 
 class _MyAppState extends State<MyApp> {
-
-  List<String> product;
+  List<String> _products = ['Food Tester'];
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
@@ -28,16 +25,22 @@ class _MyAppState extends State<MyApp> {
                 margin: EdgeInsets.all(10.0),
                 child: RaisedButton(
                   onPressed: () {},
-                  child: Text("Add Product"),
+                  child: Text("Testing"),
                 ),
               ),
-              Card(
-                child: Column(
-                  children: <Widget>[
-                    Image.asset('assets/bach.jpg'),
-                    Text("Food")
-                  ],
-                ),
+              Column(
+                children: _products
+                    .map(
+                      (elem) => Card(
+                            child: Column(
+                              children: <Widget>[
+                                Image.asset('assets/bach.jpg'),
+                                Text(elem)
+                              ],
+                            ),
+                          ),
+                    )
+                    .toList(),
               ),
             ],
           )),
