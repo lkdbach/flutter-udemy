@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart';
 
-void main() => runApp(MyApp());
+import './pages/auth.dart';
+import './pages/products_admin.dart';
+import './pages/products.dart';
+import './pages/product.dart';
+
+void main() {
+  // debugPaintSizeEnabled = true;
+  // debugPaintBaselinesEnabled = true;
+  // debugPaintPointersEnabled = true;
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -10,40 +21,54 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<String> _products = ['Food Tester'];
+  List<Map<String, String>> _products = [];
+
+  void _addProduct(Map<String, String> product) {
+    setState(() {
+      _products.add(product);
+    });
+    print(_products);
+  }
+
+  void _deleteProduct(int index) {
+    setState(() {
+      _products.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(
-            title: Text("EasyList"),
-          ),
-          body: Column(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.all(10.0),
-                child: RaisedButton(
-                  onPressed: () {},
-                  child: Text("Testing"),
-                ),
-              ),
-              Column(
-                children: _products
-                    .map(
-                      (elem) => Card(
-                            child: Column(
-                              children: <Widget>[
-                                Image.asset('assets/bach.jpg'),
-                                Text(elem)
-                              ],
-                            ),
-                          ),
-                    )
-                    .toList(),
-              ),
-            ],
-          )),
+      // debugShowMaterialGrid: true,
+      theme: ThemeData(
+          brightness: Brightness.light,
+          primarySwatch: Colors.deepOrange,
+          accentColor: Colors.deepPurple),
+      // home: AuthPage(),
+      routes: {
+        '/': (BuildContext context) =>
+            ProductsPage(_products, _addProduct, _deleteProduct),
+        '/admin': (BuildContext context) => ProductsAdminPage(),
+      },
+      onGenerateRoute: (RouteSettings settings) {
+        final List<String> pathElements = settings.name.split('/');
+        if (pathElements[0] != '') {
+          return null;
+        }
+        if (pathElements[1] == 'product') {
+          final int index = int.parse(pathElements[2]);
+          return MaterialPageRoute<bool>(
+            builder: (BuildContext context) => ProductPage(
+                _products[index]['title'], _products[index]['image']),
+          );
+        }
+        return null;
+      },
+      onUnknownRoute: (RouteSettings settings) {
+        return MaterialPageRoute(
+            builder: (BuildContext context) =>
+                ProductsPage(_products, _addProduct, _deleteProduct));
+      },
     );
   }
 }
